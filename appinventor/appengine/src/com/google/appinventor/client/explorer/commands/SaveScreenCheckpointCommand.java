@@ -64,62 +64,57 @@ public final class SaveScreenCheckpointCommand extends ChainableCommand {
 
   @Override
   public void execute(final ProjectNode node) {
-	
-  		  handleOkClick(node.getProjectRoot());        
+    handleOkClick(node.getProjectRoot());        
   }
        
   private void handleOkClick(ProjectRootNode oldProjectNode) {
-		  String oldName = oldProjectNode.getName()+"_Screen";
-		  String defaultNewName;
-		  if (checkpoint) {
-    		String prefix = MESSAGES.defaultCheckpointProjectName(oldName, "");
-    		List<Project> checkpointProjects =
-        	  Ode.getInstance().getProjectManager().getProjects(prefix);
+    String oldName = oldProjectNode.getName()+"_Screen";
+    String defaultNewName;
+    if (checkpoint) {
+      String prefix = MESSAGES.defaultCheckpointProjectName(oldName, "");
+      List<Project> checkpointProjects =
+      Ode.getInstance().getProjectManager().getProjects(prefix);
 
-    		  String nextSuffix;
-
-    		if (checkpointProjects.isEmpty()) {
-      		  nextSuffix = "1";
-    		} else {
-      		  // Find the highest number in the checkpoint projects' names.
-      		  int highestNumber = 0;
-      		  int prefixLength = prefix.length();
-      		  for (Project checkpointProject : checkpointProjects) {
-        		String checkpointName = checkpointProject.getProjectName();
-        		try {
-          		highestNumber = Math.max(highestNumber,
-            	    Integer.parseInt(checkpointName.substring(prefixLength)));
-        		} catch (NumberFormatException e) {
-          		  continue;
-        		}
-      		  }
-      		  nextSuffix = Integer.toString(highestNumber + 1);
-    		}
-
-    		defaultNewName = MESSAGES.defaultCheckpointProjectName(oldName, nextSuffix);
-
-  			} else {
-    		// Save As
-    		defaultNewName = MESSAGES.defaultSaveAsProjectName(oldName);
-  		  }
-    	  copyProjectAction(oldProjectNode, defaultNewName);
+      String nextSuffix;
+      if (checkpointProjects.isEmpty()) {
+        nextSuffix = "1";
+      } else {
+        // Find the highest number in the checkpoint projects' names.
+        int highestNumber = 0;
+      	int prefixLength = prefix.length();
+      	for (Project checkpointProject : checkpointProjects) {
+          String checkpointName = checkpointProject.getProjectName();
+          try {
+            highestNumber = Math.max(highestNumber,
+            Integer.parseInt(checkpointName.substring(prefixLength)));
+          } catch (NumberFormatException e) {
+            continue;
+          }
+      	 }
+      	 nextSuffix = Integer.toString(highestNumber + 1);
+      }
+      defaultNewName = MESSAGES.defaultCheckpointProjectName(oldName, nextSuffix);
+    } else {
+    // Save As
+      defaultNewName = MESSAGES.defaultSaveAsProjectName(oldName);
+   }
+   copyProjectAction(oldProjectNode, defaultNewName);
   }
   protected void copyProjectAction(ProjectRootNode oldProjectNode, String newName) {
-  	final Ode ode = Ode.getInstance();
-	OdeAsyncCallback<UserProject> callback = new OdeAsyncCallback<UserProject>(
+    final Ode ode = Ode.getInstance();
+    OdeAsyncCallback<UserProject> callback = new OdeAsyncCallback<UserProject>(
     // failure message
     MESSAGES.copyProjectError()) {
-    	@Override
-    	public void onSuccess(UserProject newProjectInfo) {
-    	// Update project list
-    		Project newProject = ode.getProjectManager().addProject(newProjectInfo);
-    	  	if (!checkpoint) {
-    	        ode.openYoungAndroidProjectInDesigner(newProject);
-    	    }
+      @Override
+      public void onSuccess(UserProject newProjectInfo) {
+      // Update project list
+        Project newProject = ode.getProjectManager().addProject(newProjectInfo);
+        if (!checkpoint) {
+          ode.openYoungAndroidProjectInDesigner(newProject);
     	}
-      };
-
-      // Create new copy on the backend
-      ode.getProjectService().copyProject(oldProjectNode.getProjectId(), newName, callback);
+      }
+    };
+    // Create new copy on the backend
+    ode.getProjectService().copyProject(oldProjectNode.getProjectId(), newName, callback);
   }
 }
