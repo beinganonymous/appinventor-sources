@@ -340,16 +340,13 @@ public class DeleteFileCommand extends ChainableCommand {
       });
     }
     public void allowCheckPoint(){
-      			if (cb.getValue() == true) {
-        		  ProjectRootNode projectRootNode1 = Ode.getInstance().getCurrentYoungAndroidProjectRootNode();
-  				  if (projectRootNode1 != null) {
-    				ChainableCommand cmd = new SaveAllEditorsCommand(
-        			new SaveScreenCheckpointCommand(true));
-    				cmd.startExecuteChain(Tracking.PROJECT_ACTION_CHECKPOINT_YA, projectRootNode1);
-  				  }
-    	  
-      			  
-      			
+      if (cb.getValue() == true) {
+        ProjectRootNode projectRootNode1 = Ode.getInstance().getCurrentYoungAndroidProjectRootNode();
+        if (projectRootNode1 != null) {
+    	  ChainableCommand cmd = new SaveAllEditorsCommand(
+          new SaveScreenCheckpointCommand(true));
+    	  cmd.startExecuteChain(Tracking.PROJECT_ACTION_CHECKPOINT_YA, projectRootNode1);
+        }		
       }
     }
   }
